@@ -1,9 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'providers/package_info_instance/package_info_instance.dart';
+import 'providers/shared_preferences_instance/shared_preferences_instance.dart';
+
+void main() async {
+
+  await initSharedPreferencesInstance();
+  await initPackageInfoInstance();
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
