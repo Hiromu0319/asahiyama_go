@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:asahiyama_go/model/app_version/app_version.dart';
+import 'package:asahiyama_go/ui_core/update_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -47,7 +47,7 @@ class MainPage extends HookConsumerWidget {
 
           final shouldShow = shouldShowForceUpdateDialog(appVersion);
           if (shouldShow && context.mounted) {
-            log('バージョンアップ');
+            UpdateDialog.show(context: context);
           }
 
         });
