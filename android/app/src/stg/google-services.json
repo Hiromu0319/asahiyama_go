@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203204873701",
+    "project_id": "asahiyama-go-stg",
+    "storage_bucket": "asahiyama-go-stg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203204873701:android:476c830da605ada003f30c",
+        "android_client_info": {
+          "package_name": "com.hiromusato.asahiyama.go.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVluYjl6Wlghjc4ub8JlPLH6_9-RBLB3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
