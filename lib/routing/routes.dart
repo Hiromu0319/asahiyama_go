@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../page/login_page.dart';
 import '../page/my_page.dart';
 import '../page/notification_page.dart';
 import '../page/post_page.dart';
 import '../page/search_page.dart';
 import '../page/top_page.dart';
+
+class LoginPageRoute extends GoRouteData {
+  const LoginPageRoute();
+
+  static const path = '/login';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const LoginPage();
+  }
+}
 
 class TopPageRoute extends GoRouteData {
   const TopPageRoute();

@@ -9,16 +9,16 @@ import '../routes.dart';
 
 part 'router.g.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     routes: [
       ...$appRoutes,
     ],
     debugLogDiagnostics: kDebugMode,
-    initialLocation: TopPageRoute.path,
+    initialLocation: LoginPageRoute.path,
   );
 }
