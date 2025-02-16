@@ -47,8 +47,13 @@ part 'main_page_shell_route.g.dart';
       ),
     ],
   ),
-  TypedGoRoute<LoginPageRoute>(
-      path: LoginPageRoute.path
+  TypedGoRoute<SignInPageRoute>(
+    path: SignInPageRoute.path,
+    routes: [
+      TypedGoRoute<SignUpPageRoute>(
+        path: SignUpPageRoute.path,
+      ),
+    ],
   ),
 ])
 

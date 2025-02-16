@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../page/login_page.dart';
+import '../page/sign_in_page.dart';
 import '../page/my_page.dart';
 import '../page/notification_page.dart';
 import '../page/post_page.dart';
 import '../page/search_page.dart';
+import '../page/sign_up_page.dart';
 import '../page/top_page.dart';
 
-class LoginPageRoute extends GoRouteData {
-  const LoginPageRoute();
+class SignInPageRoute extends GoRouteData {
+  const SignInPageRoute();
 
-  static const path = '/login';
+  static const path = '/signIn';
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const LoginPage();
+    return const SignInPage();
+  }
+}
+
+class SignUpPageRoute extends GoRouteData {
+  const SignUpPageRoute();
+
+  static const path = 'signUp';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SignUpPage();
   }
 }
 
