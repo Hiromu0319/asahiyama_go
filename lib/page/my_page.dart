@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../providers/profile_notifier/profile_notifier.dart';
+
 class MyPage extends HookConsumerWidget {
   const MyPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final user = ref.watch(authNotifierProvider);
+    final user = ref.watch(profileNotifierProvider);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -44,7 +46,7 @@ class MyPage extends HookConsumerWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-              if (user != null && user.isAnonymous) {
+              if (user.value != null && user.value?.type == 0) {
                 try {
                   await ref.read(authNotifierProvider.notifier).linkWithCredential(
                       name: nameController.value.text,
@@ -64,8 +66,8 @@ class MyPage extends HookConsumerWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-              if (user != null) {
-                if (!user.isAnonymous) {
+              if (user.value != null) {
+                if (user.value!.type != 0) {
                   try {
                     await ref.read(authNotifierProvider.notifier).signOut();
                     if (context.mounted) {
@@ -93,9 +95,9 @@ class MyPage extends HookConsumerWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-              if (user != null) {
+              if (user.value != null) {
                 try {
-                  await ref.read(authNotifierProvider.notifier).delete(id: user.uid);
+                  await ref.read(authNotifierProvider.notifier).delete(id: user.value!.id);
                   if (context.mounted) {
                     const SignInPageRoute().push(context);
                   }
@@ -111,6 +113,11 @@ class MyPage extends HookConsumerWidget {
             },
             child: const Text('アカウント削除')
         ),
+        if (user.value != null && user.value?.type == 2)
+          ElevatedButton(
+              onPressed: () {},
+              child: const Text('Push通知を送信する')
+          ),
       ],
     );
   }
