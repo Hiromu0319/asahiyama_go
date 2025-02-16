@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/providers/auth_notifier/auth_notifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,17 @@ GoRouter router(Ref ref) {
       ...$appRoutes,
     ],
     debugLogDiagnostics: kDebugMode,
-    initialLocation: LoginPageRoute.path,
+    initialLocation: SignInPageRoute.path,
+    redirect: (BuildContext context, GoRouterState state) async {
+      final authState = ref.watch(authNotifierProvider);
+      if (authState == null) {
+        return SignInPageRoute.path;
+      } else {
+        if (state.matchedLocation == SignInPageRoute.path) {
+          return TopPageRoute.path;
+        }
+      }
+      return null;
+    }
   );
 }
