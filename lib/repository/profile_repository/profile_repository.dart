@@ -10,23 +10,26 @@ part 'profile_repository.g.dart';
 
 @Riverpod(keepAlive: true)
 ProfileRepository profileRepository(Ref ref) {
+  final authInstance = ref.watch(authInstanceProvider);
   final fireStoreInstance = ref.watch(fireStoreInstanceProvider);
   return ProfileRepository(
+    authInstance: authInstance,
     fireStoreInstance: fireStoreInstance,
   );
 }
 
-final _auth = FirebaseAuth.instance;
-
 final class ProfileRepository {
   ProfileRepository({
+    required FirebaseAuth authInstance,
     required FirebaseFirestore fireStoreInstance,
-  }) : _fireStoreInstance = fireStoreInstance;
+  }) : _authInstance = authInstance,
+        _fireStoreInstance = fireStoreInstance;
 
+  final FirebaseAuth _authInstance;
   final FirebaseFirestore _fireStoreInstance;
 
   Future<AuthUser?> userInfo() async {
-    User? user = _auth.currentUser;
+    User? user = _authInstance.currentUser;
     if (user == null) {
       return null;
     }

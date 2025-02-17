@@ -12,19 +12,22 @@ part 'auth_repository.g.dart';
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) {
   final authInstance = ref.watch(authInstanceProvider);
+  final fireStoreInstance = ref.watch(fireStoreInstanceProvider);
   return AuthRepository(
     authInstance: authInstance,
+    fireStoreInstance: fireStoreInstance
   );
 }
-
-final _db = FirebaseFirestore.instance;
 
 final class AuthRepository {
   AuthRepository({
     required FirebaseAuth authInstance,
-  }) : _authInstance = authInstance;
+    required FirebaseFirestore fireStoreInstance,
+  })  : _authInstance = authInstance,
+        _fireStoreInstance = fireStoreInstance;
 
   final FirebaseAuth _authInstance;
+  final FirebaseFirestore _fireStoreInstance;
 
   User? get currentUser => _authInstance.currentUser;
 
@@ -41,7 +44,7 @@ final class AuthRepository {
       type: 0,
       createdAt: const UnionTimestamp.serverTimestamp(),
     );
-    await _db
+    await _fireStoreInstance
         .collection('Users')
         .withConverter(
           fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
@@ -82,7 +85,7 @@ final class AuthRepository {
       email: email,
       createdAt: const UnionTimestamp.serverTimestamp(),
     );
-    await _db
+    await _fireStoreInstance
         .collection('Users')
         .withConverter(
           fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
@@ -114,7 +117,7 @@ final class AuthRepository {
       email: email,
       createdAt: const UnionTimestamp.serverTimestamp(),
     );
-    await _db
+    await _fireStoreInstance
         .collection('Users')
         .withConverter(
       fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
@@ -133,7 +136,10 @@ final class AuthRepository {
     required String id
   }) async {
     await _authInstance.currentUser!.delete();
-    _db.collection('Users').doc(id).delete();
+    _fireStoreInstance
+        .collection('Users')
+        .doc(id)
+        .delete();
   }
 
 }
