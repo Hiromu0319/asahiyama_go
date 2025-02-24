@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../model/user/auth_user.dart';
+import '../../model/profile/profile.dart';
 import '../../util/json_converters/union_timestamp.dart';
 
 part 'auth_repository.g.dart';
@@ -33,13 +33,13 @@ final class AuthRepository {
 
   Stream<User?> authStateChanges() => _authInstance.authStateChanges();
 
-  Future<AuthUser?> signInAnonymously() async {
+  Future<void> signInAnonymously() async {
     final userCredential = await _authInstance.signInAnonymously();
     User? user = userCredential.user;
     if (user == null) {
-      return null;
+      return;
     }
-    final authUser = AuthUser(
+    final authUser = Profile(
       id: user.uid,
       type: 0,
       createdAt: const UnionTimestamp.serverTimestamp(),
@@ -47,12 +47,11 @@ final class AuthRepository {
     await _fireStoreInstance
         .collection('Users')
         .withConverter(
-          fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
+          fromFirestore: (ds, _) => Profile.fromDocumentSnapshot(ds),
           toFirestore: (obj, _) => obj.toJson(),
         )
         .doc(authUser.id)
         .set(authUser, SetOptions(merge: true));
-    return authUser;
   }
 
   Future<void> signIn({
@@ -65,7 +64,7 @@ final class AuthRepository {
     );
   }
 
-  Future<AuthUser?> signUp({
+  Future<void> signUp({
     required String name,
     required String email,
     required String password,
@@ -76,9 +75,9 @@ final class AuthRepository {
     );
     User? user = userCredential.user;
     if (user == null) {
-      return null;
+      return;
     }
-    final authUser = AuthUser(
+    final authUser = Profile(
       id: user.uid,
       type: 1,
       name: name,
@@ -88,15 +87,14 @@ final class AuthRepository {
     await _fireStoreInstance
         .collection('Users')
         .withConverter(
-          fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
+          fromFirestore: (ds, _) => Profile.fromDocumentSnapshot(ds),
           toFirestore: (obj, _) => obj.toJson(),
         )
         .doc(authUser.id)
         .set(authUser, SetOptions(merge: true));
-    return authUser;
   }
 
-  Future<AuthUser?> linkWithCredential({
+  Future<void> linkWithCredential({
     required String name,
     required String email,
     required String password,
@@ -108,9 +106,9 @@ final class AuthRepository {
     final userCredential = await _authInstance.currentUser!.linkWithCredential(credential);
     User? user = userCredential.user;
     if (user == null) {
-      return null;
+      return;
     }
-    final authUser = AuthUser(
+    final authUser = Profile(
       id: user.uid,
       type: 1,
       name: name,
@@ -120,12 +118,11 @@ final class AuthRepository {
     await _fireStoreInstance
         .collection('Users')
         .withConverter(
-      fromFirestore: (ds, _) => AuthUser.fromDocumentSnapshot(ds),
+      fromFirestore: (ds, _) => Profile.fromDocumentSnapshot(ds),
       toFirestore: (obj, _) => obj.toJson(),
     )
         .doc(authUser.id)
         .set(authUser, SetOptions(merge: true));
-    return authUser;
   }
 
   Future<void> signOut() async {

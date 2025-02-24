@@ -15,6 +15,7 @@ class MyPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final user = ref.watch(profileNotifierProvider);
+    final myPost = ref.watch(fetchMyPostProvider);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -118,6 +119,30 @@ class MyPage extends HookConsumerWidget {
               onPressed: () {},
               child: const Text('Push通知を送信する')
           ),
+        myPost.when(
+          data: (data) {
+            return Column(
+              children: List.generate(data.length, (index) => Column(
+                children: [
+                  Image.network(data[index]!.postImageUrl, height: 80),
+                  IconButton(
+                        onPressed: () {
+                          ref.read(profileNotifierProvider.notifier)
+                              .deletePost(
+                              category: data[index]!.category,
+                              id: data[index]!.postsId,
+                              imagePath: data[index]!.imagePath
+                          );
+                        },
+                        icon: const Icon(Icons.delete)
+                    ),
+                ],
+              )),
+            );
+          },
+          loading: () => const CircularProgressIndicator(),
+          error: (error, _) => Text("エラー: $error"),
+        )
       ],
     );
   }

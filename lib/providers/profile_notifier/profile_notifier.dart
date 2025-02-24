@@ -1,6 +1,7 @@
-import 'package:asahiyama_go/model/user/auth_user.dart';
 import 'package:asahiyama_go/repository/profile_repository/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../model/profile/profile.dart';
 import '../auth_notifier/auth_notifier.dart';
 
 part 'profile_notifier.g.dart';
@@ -8,7 +9,7 @@ part 'profile_notifier.g.dart';
 @Riverpod(keepAlive: true)
 class ProfileNotifier extends _$ProfileNotifier {
   @override
-  Future<AuthUser?> build() {
+  Future<Profile?> build() {
     ref.listen(
       authNotifierProvider,
           (_, next) {
@@ -20,7 +21,23 @@ class ProfileNotifier extends _$ProfileNotifier {
       },
     );
     final profileRepository = ref.watch(profileRepositoryProvider);
-    return profileRepository.userInfo();
+    return profileRepository.fetchProfile();
   }
 
+  Future<void> deletePost({
+    required String category,
+    required String id,
+    required String imagePath
+  }) async {
+    final profileRepository = ref.watch(profileRepositoryProvider);
+    await profileRepository.deletePost(category: category, id: id, imagePath: imagePath);
+    ref.invalidateSelf();
+  }
+
+}
+
+@riverpod
+Future<List<Post?>> fetchMyPost(ref) {
+  final profileRepository = ref.watch(profileRepositoryProvider);
+  return profileRepository.fetchPosts();
 }

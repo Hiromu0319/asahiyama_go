@@ -1,4 +1,3 @@
-import 'package:asahiyama_go/model/user/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:asahiyama_go/repository/auth_repository/auth_repository.dart';
@@ -19,9 +18,9 @@ class AuthNotifier extends _$AuthNotifier {
     return currentUser;
   }
 
-  Future<AuthUser?> signInAnonymously() async {
+  Future<void> signInAnonymously() async {
     final authRepository = ref.read(authRepositoryProvider);
-    return authRepository.signInAnonymously();
+    await authRepository.signInAnonymously();
   }
 
   Future<void> signIn({
@@ -32,22 +31,22 @@ class AuthNotifier extends _$AuthNotifier {
     await authRepository.signIn(email: email, password: password);
   }
 
-  Future<AuthUser?> signUp({
+  Future<void> signUp({
     required String name,
     required String email,
     required String password
   }) async {
     final authRepository = ref.read(authRepositoryProvider);
-    return authRepository.signUp(name: name, email: email, password: password);
+    await authRepository.signUp(name: name, email: email, password: password);
   }
 
-  Future<AuthUser?> linkWithCredential({
+  Future<void> linkWithCredential({
     required String name,
     required String email,
     required String password
   }) async {
     final authRepository = ref.read(authRepositoryProvider);
-    return authRepository.linkWithCredential(name: name, email: email, password: password);
+    await authRepository.linkWithCredential(name: name, email: email, password: password);
   }
 
   Future<void> signOut() async => ref.read(authRepositoryProvider).signOut();
