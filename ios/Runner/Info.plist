@@ -47,6 +47,8 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+		<key>NSPhotoLibraryUsageDescription</key>
+        <string>画像をアップロードするために、ライブラリへのアクセス権限を有効にしてください</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>
