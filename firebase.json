@@ -1,1 +1,43 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"asahiyama-go-stg","appId":"1:203204873701:android:476c830da605ada003f30c","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"asahiyama-go-stg","appId":"1:203204873701:ios:2b4225b2a03f98f703f30c","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"asahiyama-go-stg","configurations":{"android":"1:203204873701:android:476c830da605ada003f30c","ios":"1:203204873701:ios:2b4225b2a03f98f703f30c"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "asahiyama-go-stg",
+          "appId": "1:203204873701:android:476c830da605ada003f30c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "asahiyama-go-stg",
+          "appId": "1:203204873701:ios:2b4225b2a03f98f703f30c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "asahiyama-go-stg",
+          "configurations": {
+            "android": "1:203204873701:android:476c830da605ada003f30c",
+            "ios": "1:203204873701:ios:2b4225b2a03f98f703f30c"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "firebase-functions",
+      "codebase": "firebase-functions",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
