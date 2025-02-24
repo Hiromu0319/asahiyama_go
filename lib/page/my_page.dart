@@ -1,4 +1,5 @@
 import 'package:asahiyama_go/providers/auth_notifier/auth_notifier.dart';
+import 'package:asahiyama_go/providers/like_notifier/like_notifier.dart';
 import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:asahiyama_go/routing/routes.dart';
 import 'package:asahiyama_go/ui_core/error_dialog.dart';
@@ -16,6 +17,7 @@ class MyPage extends HookConsumerWidget {
 
     final user = ref.watch(profileNotifierProvider);
     final myPost = ref.watch(fetchMyPostProvider);
+    final myLike = ref.watch(fetchMyLikeProvider);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -119,29 +121,57 @@ class MyPage extends HookConsumerWidget {
               onPressed: () {},
               child: const Text('Push通知を送信する')
           ),
-        myPost.when(
-          data: (data) {
-            return Column(
-              children: List.generate(data.length, (index) => Column(
-                children: [
-                  Image.network(data[index]!.postImageUrl, height: 80),
-                  IconButton(
-                        onPressed: () {
-                          ref.read(profileNotifierProvider.notifier)
-                              .deletePost(
-                              category: data[index]!.category,
-                              id: data[index]!.postsId,
-                              imagePath: data[index]!.imagePath
-                          );
-                        },
-                        icon: const Icon(Icons.delete)
-                    ),
-                ],
-              )),
-            );
-          },
-          loading: () => const CircularProgressIndicator(),
-          error: (error, _) => Text("エラー: $error"),
+        Row(
+          children: [
+            myPost.when(
+              data: (data) {
+                return Column(
+                  children: List.generate(data.length, (index) => Column(
+                    children: [
+                      Image.network(data[index]!.postImageUrl, height: 80),
+                      IconButton(
+                            onPressed: () {
+                              ref.read(profileNotifierProvider.notifier)
+                                  .deletePost(
+                                  category: data[index]!.category,
+                                  id: data[index]!.postsId,
+                                  imagePath: data[index]!.imagePath
+                              );
+                            },
+                            icon: const Icon(Icons.delete)
+                        ),
+                    ],
+                  )),
+                );
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, _) => Text("エラー: $error"),
+            ),
+            myLike.when(
+              data: (data) {
+                return Column(
+                  children: List.generate(data.length, (index) => Column(
+                    children: [
+                      Image.network(data[index]!.postImageUrl, height: 80),
+                      IconButton(
+                          onPressed: () {
+                            ref.read(likeNotifierProvider.notifier)
+                                .decrement(
+                                likesId: data[index]!.likesId,
+                                postsId: data[index]!.postsId,
+                                category: data[index]!.category
+                            );
+                          },
+                          icon: const Icon(Icons.delete)
+                      ),
+                    ],
+                  )),
+                );
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, _) => Text("エラー: $error"),
+            ),
+          ],
         )
       ],
     );

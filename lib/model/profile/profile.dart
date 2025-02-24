@@ -60,6 +60,7 @@ class Like with _$Like {
   const factory Like({
     required String likesId,
     required String postsId,
+    required String category,
     required String postImageUrl,
     required String notificationsId,
     @unionTimestampConverter required UnionTimestamp createdAt,
@@ -69,7 +70,10 @@ class Like with _$Like {
 
   factory Like.fromDocumentSnapshot(DocumentSnapshot ds) {
     final data = ds.data()! as Map<String, dynamic>;
-    return Like.fromJson(data);
+    return Like.fromJson(<String, dynamic>{
+      ...data,
+      'likesId': ds.id,
+    });
   }
 
 }

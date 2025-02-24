@@ -104,7 +104,7 @@ final class PostRepository {
     final collection = _fireStoreInstance.collection('Posts');
     final stream = collection
         .snapshots()
-        .map((e) => e.docs.map((e) => Post.fromJson(e.data())).toList());
+        .map((e) => e.docs.map((e) => Post.fromJsonAddPostId(e.data(), e.id)).toList());
     return stream;
   }
 
@@ -114,7 +114,7 @@ final class PostRepository {
     final collection = _fireStoreInstance.collection(category);
     final stream = collection
         .snapshots()
-        .map((e) => e.docs.map((e) => Post.fromJson(e.data())).toList());
+        .map((e) => e.docs.map((e) => Post.fromJsonAddPostId(e.data(), e.id)).toList());
     return stream;
   }
 

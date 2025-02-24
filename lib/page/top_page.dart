@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/providers/like_notifier/like_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -26,7 +27,30 @@ class TopPage extends HookConsumerWidget {
             child: posts.when(
                 data: (data) {
                   return Column(
-                    children: List.generate(data.length, (index) => Image.network(data[index].postImageUrl)),
+                    children: List.generate(data.length, (index) => Column(
+                      children: [
+                        Image.network(data[index].postImageUrl),
+                        Text('${data[index].likeCount}'),
+                        IconButton(
+                            onPressed: () async {
+
+                              final result = await ref.read(likeNotifierProvider.notifier).check(postsId: data[index].postId!);
+                              if (result) return;
+
+                              ref.read(likeNotifierProvider.notifier).increment(
+                                  name: '',
+                                  postsId: data[index].postId!,
+                                  postImageUrl: data[index].postImageUrl,
+                                  targetUserId: 'a',
+                                  pushToken: '',
+                                  category: 'cat',
+                                  notificationId: 'a'
+                              );
+                            },
+                            icon: const Icon(Icons.add)
+                        ),
+                      ],
+                    )),
                   );
                 },
               loading: () => const CircularProgressIndicator(),

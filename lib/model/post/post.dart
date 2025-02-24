@@ -9,6 +9,7 @@ part 'post.g.dart';
 @freezed
 class Post with _$Post {
   const factory Post({
+    String? postId,
     required String userId,
     required String name,
     required String imagePath,
@@ -28,6 +29,13 @@ class Post with _$Post {
     return Post.fromJson(<String, dynamic>{
       ...data,
       'userId': ds.id,
+    });
+  }
+
+  factory Post.fromJsonAddPostId(Map<String, dynamic> json, String postId) {
+    return Post.fromJson(<String, dynamic>{
+      ...json,
+      'postId': postId,
     });
   }
 
