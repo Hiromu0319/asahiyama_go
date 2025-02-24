@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
 
 class MyPage extends HookConsumerWidget {
@@ -18,6 +19,7 @@ class MyPage extends HookConsumerWidget {
     final user = ref.watch(profileNotifierProvider);
     final myPost = ref.watch(fetchMyPostProvider);
     final myLike = ref.watch(fetchMyLikeProvider);
+    final myComment = ref.watch(fetchMyCommentProvider);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -158,6 +160,30 @@ class MyPage extends HookConsumerWidget {
                             ref.read(likeNotifierProvider.notifier)
                                 .decrement(
                                 likesId: data[index]!.likesId,
+                                postsId: data[index]!.postsId,
+                                category: data[index]!.category
+                            );
+                          },
+                          icon: const Icon(Icons.delete)
+                      ),
+                    ],
+                  )),
+                );
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, _) => Text("エラー: $error"),
+            ),
+            myComment.when(
+              data: (data) {
+                return Column(
+                  children: List.generate(data.length, (index) => Column(
+                    children: [
+                      Text(data[index]!.message!),
+                      IconButton(
+                          onPressed: () {
+                            ref.read(commentNotifierProvider.notifier)
+                                .delete(
+                                commentsId: data[index]!.commentsId,
                                 postsId: data[index]!.postsId,
                                 category: data[index]!.category
                             );

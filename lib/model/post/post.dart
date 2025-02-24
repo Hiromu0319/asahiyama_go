@@ -16,6 +16,7 @@ class Post with _$Post {
     required String postImageUrl,
     required String pushToken,
     required String category,
+    List<String>? comments,
     @Default('') String? message,
     @Default(0) int? likeCount,
     @Default(0) int? commentCount,

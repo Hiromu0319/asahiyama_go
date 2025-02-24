@@ -84,6 +84,7 @@ class Comment with _$Comment {
     required String commentsId,
     required String notificationsId,
     required String postsId,
+    required String category,
     @Default('') String? message,
     @unionTimestampConverter required UnionTimestamp createdAt,
   }) = _Comment;
@@ -92,7 +93,10 @@ class Comment with _$Comment {
 
   factory Comment.fromDocumentSnapshot(DocumentSnapshot ds) {
     final data = ds.data()! as Map<String, dynamic>;
-    return Comment.fromJson(data);
+    return Comment.fromJson(<String, dynamic>{
+      ...data,
+      'commentsId': ds.id,
+    });
   }
 
 }

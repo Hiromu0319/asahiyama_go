@@ -47,3 +47,9 @@ Future<List<Like?>> fetchMyLike(ref) {
   final profileRepository = ref.watch(profileRepositoryProvider);
   return profileRepository.fetchLikes();
 }
+
+@riverpod
+Future<List<Comment?>> fetchMyComment(ref) {
+  final profileRepository = ref.watch(profileRepositoryProvider);
+  return profileRepository.fetchComments();
+}

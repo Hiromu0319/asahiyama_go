@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../model/profile/profile.dart';
+import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
 
@@ -48,6 +49,22 @@ class TopPage extends HookConsumerWidget {
                               );
                             },
                             icon: const Icon(Icons.add)
+                        ),
+                        IconButton(
+                            onPressed: () {
+
+                              ref.read(commentNotifierProvider.notifier).post(
+                                  name: '',
+                                  postsId: data[index].postId!,
+                                  postImageUrl: data[index].postImageUrl,
+                                  targetUserId: 'a',
+                                  pushToken: '',
+                                  category: 'cat',
+                                  notificationId: 'a',
+                                  message: 'いいね！'
+                              );
+                            },
+                            icon: const Icon(Icons.message)
                         ),
                       ],
                     )),
