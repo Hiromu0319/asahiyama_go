@@ -6,7 +6,6 @@ import '../page/my_page.dart';
 import '../page/notification_page.dart';
 import '../page/post_page.dart';
 import '../page/search_page.dart';
-import '../page/sign_up_page.dart';
 import '../page/top_page.dart';
 
 class SignInPageRoute extends GoRouteData {
@@ -17,17 +16,6 @@ class SignInPageRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const SignInPage();
-  }
-}
-
-class SignUpPageRoute extends GoRouteData {
-  const SignUpPageRoute();
-
-  static const path = 'signUp';
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const SignUpPage();
   }
 }
 
