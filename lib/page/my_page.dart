@@ -5,6 +5,7 @@ import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route
 import 'package:asahiyama_go/routing/routes.dart';
 import 'package:asahiyama_go/ui_core/error_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -178,7 +179,32 @@ class MyPage extends HookConsumerWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {},
+                onPressed: () async {
+                  if (profile != null) {
+                    if (profile.type != 0) {
+                      try {
+                        await ref.read(authNotifierProvider.notifier).signOut();
+                        if (context.mounted) {
+                          const SignInPageRoute().go(context);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorDialog.show(
+                              context: context,
+                              message: 'ログアウトできません'
+                          );
+                        }
+                      }
+                    } else {
+                      if (context.mounted) {
+                        ErrorDialog.show(
+                            context: context,
+                            message: 'このユーザーはアカウントの削除が必要です。'
+                        );
+                      }
+                    }
+                  }
+                },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -189,27 +215,38 @@ class MyPage extends HookConsumerWidget {
                   ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            if (profile!.type == 0)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                onPressed: () {},
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.upgrade, color: Colors.white),
-                    Gap(10),
-                    Text('未登録状態からアカウント登録する')
-                  ],
+                  onPressed: () async {
+                    await showModalBottomSheet<void>(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        enableDrag: true,
+                        barrierColor: Colors.black.withOpacity(0.5),
+                        builder: (context) {
+                          return _BottomSheet();
+                        });
+                    },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.upgrade, color: Colors.white),
+                      Gap(10),
+                      Text('アカウント登録')
+                    ],
+                  ),
                 ),
               ),
-            ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
@@ -220,7 +257,23 @@ class MyPage extends HookConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  if (profile != null) {
+                    try {
+                      await ref.read(authNotifierProvider.notifier).delete(id: profile.id);
+                      if (context.mounted) {
+                        const SignInPageRoute().push(context);
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ErrorDialog.show(
+                            context: context,
+                            message: 'アカウントの削除に失敗しました。'
+                        );
+                      }
+                    }
+                  }
+                },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -302,6 +355,118 @@ class MyPage extends HookConsumerWidget {
     return profile.name!;
   }
 
+}
+
+class _BottomSheet extends HookConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final nameController = useTextEditingController();
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
+    return Container(
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+        ),
+        margin: const EdgeInsets.only(top: 80),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('アカウント登録', style: TextStyle(fontSize: 30, color: Colors.blue, fontWeight: FontWeight.bold)),
+            const Gap(30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.withOpacity(0.1),
+                  border: const OutlineInputBorder(),
+                  labelText: 'ユーザーネーム',
+                ),
+              ),
+            ),
+            const Gap(30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.withOpacity(0.1),
+                  border: const OutlineInputBorder(),
+                  labelText: 'メールアドレス',
+                ),
+              ),
+            ),
+            const Gap(30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.withOpacity(0.1),
+                  border: const OutlineInputBorder(),
+                  labelText: 'パスワード',
+                ),
+              ),
+            ),
+            const Gap(30),
+            ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await ref.read(authNotifierProvider.notifier).signUp(
+                        name: nameController.value.text,
+                        email: emailController.value.text,
+                        password: passwordController.value.text);
+                    if (context.mounted) {
+                      const TopPageRoute().go(context);
+                    }
+                  } on FirebaseAuthException catch (_) {
+                    if (context.mounted) {
+                      ErrorDialog.show(
+                          context: context, message: 'アカウントの作成に失敗しました。');
+                    }
+                  }
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('登録')
+            ),
+            const Gap(30),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white
+              ),
+              child: const Text('アカウント登録をおこなうと、\n画像の投稿機能や、コメント機能、いいね機能など、\nアプリのすべての機能がご利用いただけます。',
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            ),
+          ],
+        )
+    );
+  }
 }
 
 //SliverPersistentHeaderDelegateを継承したTabBarを作る
