@@ -1,8 +1,13 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../model/post/post.dart';
 import '../providers/comment_notifier/comment_notifier.dart';
@@ -124,6 +129,13 @@ class PostInformation extends HookConsumerWidget {
               ),
               Text('${post.commentCount}', style: const TextStyle(fontSize: 20)),
               const Spacer(),
+              IconButton(
+                  onPressed: () async {
+                    downloadAndSaveImage(post.postImageUrl);
+                  },
+                  icon: const Icon(Icons.download)
+              ),
+              const Gap(5),
               isLike.value != null ?
               IconButton(
                   onPressed: () {
@@ -156,6 +168,26 @@ class PostInformation extends HookConsumerWidget {
       ),
     );
   }
+
+  Future<void> downloadAndSaveImage(String imageUrl) async {
+    try {
+      Directory directory = await getApplicationDocumentsDirectory();
+      String filePath = '${directory.path}/downloaded_image.jpg';
+
+      Response response = await Dio().get(
+        imageUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      File file = File(filePath);
+      await file.writeAsBytes(response.data);
+
+      log('画像を保存しました: $filePath');
+    } catch (e) {
+      log('画像のダウンロードに失敗しました: $e');
+    }
+  }
+
 }
 
 class CommentLog extends ConsumerWidget {
