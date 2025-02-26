@@ -37,7 +37,7 @@ class MyPage extends HookConsumerWidget {
         backgroundColor: Colors.white,
       ),
       body: DefaultTabController(
-        length: 4,
+        length: 3,
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -120,32 +120,6 @@ class MyPage extends HookConsumerWidget {
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text(data[index]!.message!),),
                           ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (error, _) => Text("エラー: $error"),
-              ),
-              myPost.when(
-                data: (data) {
-                  return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        color: Colors.white,
-                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        elevation: 3,
-                        child: ListTile(
-                          title: Text(data[index]!.message!),
-                          trailing: const Icon(Icons.delete),
-                          onTap: () {
-
-                          },
                         ),
                       );
                     },
@@ -340,9 +314,6 @@ class MyPage extends HookConsumerWidget {
             Tab(
               icon: Icon(Icons.upload_file_sharp, color: Colors.blue),
             ),
-            Tab(
-              icon: Icon(Icons.notifications, color: Colors.yellow),
-            )
           ],
         ),
       ),
