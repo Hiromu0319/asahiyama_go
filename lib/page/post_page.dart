@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../const/const.dart';
+import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
 import '../ui_core/error_dialog.dart';
 
@@ -126,7 +126,7 @@ class PostPage extends HookConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: ElevatedButton(
-                  onPressed: (){
+                  onPressed: () async {
                     try {
                       ref.read(postNotifierProvider.notifier).upload(
                           category: selectedCategory.value!,
@@ -139,6 +139,13 @@ class PostPage extends HookConsumerWidget {
                         ErrorDialog.show(context: context, message: '失敗しました。');
                       }
                     }
+
+                    await Future.delayed(const Duration(seconds: 2));
+
+                    image.value = null;
+                    selectedCategory.value = null;
+                    commentController.clear();
+
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

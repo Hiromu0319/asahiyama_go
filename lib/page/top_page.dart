@@ -1,4 +1,3 @@
-import 'package:asahiyama_go/providers/like_notifier/like_notifier.dart';
 import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../model/post/post.dart';
-import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../routing/routes.dart';
 
@@ -114,46 +112,3 @@ class ImageFlame extends ConsumerWidget {
     );
   }
 }
-
-// Column(
-// children: List.generate(data.length, (index) => Column(
-//   children: [
-//     Image.network(data[index].postImageUrl),
-//     Text('${data[index].likeCount}'),
-//     IconButton(
-//         onPressed: () async {
-//
-//           final result = await ref.read(likeNotifierProvider.notifier).check(postsId: data[index].postId!);
-//           if (result) return;
-//
-//           ref.read(likeNotifierProvider.notifier).increment(
-//               name: '',
-//               postsId: data[index].postId!,
-//               postImageUrl: data[index].postImageUrl,
-//               targetUserId: 'a',
-//               pushToken: '',
-//               category: 'cat',
-//               notificationId: 'a'
-//           );
-//         },
-//         icon: const Icon(Icons.add)
-//     ),
-//     IconButton(
-//         onPressed: () {
-//
-//           ref.read(commentNotifierProvider.notifier).post(
-//               name: '',
-//               postsId: data[index].postId!,
-//               postImageUrl: data[index].postImageUrl,
-//               targetUserId: 'a',
-//               pushToken: '',
-//               category: 'cat',
-//               notificationId: 'a',
-//               message: 'いいね！'
-//           );
-//         },
-//         icon: const Icon(Icons.message)
-//     ),
-//   ],
-// )),
-//);
