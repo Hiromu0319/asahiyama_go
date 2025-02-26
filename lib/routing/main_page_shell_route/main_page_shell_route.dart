@@ -42,6 +42,11 @@ part 'main_page_shell_route.g.dart';
         routes: [
           TypedGoRoute<MyPageRoute>(
             path: MyPageRoute.path,
+            routes: [
+              TypedGoRoute<PostDetailPageRoute>(
+                path: '${PostDetailPageRoute.path}/:id',
+              ),
+            ],
           ),
         ],
       ),

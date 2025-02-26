@@ -66,3 +66,11 @@ Stream<List<Post>> fetchPostCategory(ref, {
   final postRepository = ref.read(postRepositoryProvider);
   return postRepository.fetchCategory(category: category);
 }
+
+@riverpod
+Future<Post?> postInformation(ref, {
+  required String id
+}) {
+  final postRepository = ref.read(postRepositoryProvider);
+  return postRepository.postInformation(id: id);
+}

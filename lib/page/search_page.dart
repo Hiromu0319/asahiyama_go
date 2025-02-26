@@ -1,9 +1,11 @@
+import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../providers/post_notifier/post_notifier.dart';
+import '../routing/routes.dart';
 
 class SearchPage extends HookConsumerWidget {
   const SearchPage({super.key});
@@ -124,13 +126,18 @@ class SearchPage extends HookConsumerWidget {
                 ),
                 delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                    return CachedNetworkImage(
-                      width: double.infinity,
-                      imageUrl: data[index].postImageUrl,
-                      progressIndicatorBuilder: (context, url, downloadProgress) =>
-                          CircularProgressIndicator(value: downloadProgress.progress),
-                      errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-                      fit: BoxFit.cover,
+                    return InkWell(
+                      onTap: () {
+                        PostDetailPageRoute(id: data[index].postId!).push(context);
+                      },
+                      child: CachedNetworkImage(
+                        width: double.infinity,
+                        imageUrl: data[index].postImageUrl,
+                        progressIndicatorBuilder: (context, url, downloadProgress) =>
+                            CircularProgressIndicator(value: downloadProgress.progress),
+                        errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+                        fit: BoxFit.cover,
+                      ),
                     );
                   },
                   childCount: data.length,

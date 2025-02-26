@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../model/comment/comment.dart';
 import '../../repository/comment_repository/comment_repository.dart';
 
 part 'comment_notifier.g.dart';
@@ -58,4 +59,12 @@ class CommentNotifier extends _$CommentNotifier {
 enum CommentState {
   loading,
   notPress
+}
+
+@riverpod
+Future<Comment?> commentInformation(ref, {
+  required String id
+}) {
+  final commentRepository = ref.read(commentRepositoryProvider);
+  return commentRepository.commentInformation(id: id);
 }

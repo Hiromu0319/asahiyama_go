@@ -154,5 +154,20 @@ final class CommentRepository {
         });
   }
 
+  Future<Comment?> commentInformation({
+    required String id,
+  }) async {
+
+    final commentSnapshot = await _fireStoreInstance
+        .collection('Comments')
+        .doc(id)
+        .withConverter(
+          fromFirestore: (ds, _) => Comment.fromDocumentSnapshot(ds),
+          toFirestore: (obj, _) => obj.toJson(),
+        )
+        .get();
+
+    return commentSnapshot.data();
+  }
 
 }

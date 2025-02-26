@@ -100,6 +100,23 @@ final class PostRepository {
 
   }
 
+  Future<Post?> postInformation({
+    required String id,
+  }) async {
+
+    final postSnapshot = await _fireStoreInstance
+        .collection('Posts')
+        .doc(id)
+        .withConverter(
+          fromFirestore: (ds, _) => Post.fromDocumentSnapshot(ds),
+          toFirestore: (obj, _) => obj.toJson(),
+        )
+        .get();
+
+    return postSnapshot.data();
+  }
+
+
   Stream<List<Post>> fetch() {
     final collection = _fireStoreInstance.collection('Posts');
     final stream = collection

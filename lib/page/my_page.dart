@@ -57,13 +57,18 @@ class MyPage extends HookConsumerWidget {
                     ),
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return CachedNetworkImage(
-                        width: double.infinity,
-                        imageUrl: data[index]!.postImageUrl,
-                        progressIndicatorBuilder: (context, url, downloadProgress) =>
-                            CircularProgressIndicator(value: downloadProgress.progress),
-                        errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-                        fit: BoxFit.cover,
+                      return GestureDetector(
+                        onTap:() {
+                          PostDetailPageRoute(id: data[index]!.postsId).push(context);
+                        },
+                        child: CachedNetworkImage(
+                          width: double.infinity,
+                          imageUrl: data[index]!.postImageUrl,
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress),
+                          errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+                          fit: BoxFit.cover,
+                        ),
                       );
                     },
                   );

@@ -1,4 +1,5 @@
 import 'package:asahiyama_go/providers/like_notifier/like_notifier.dart';
+import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -7,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../model/post/post.dart';
 import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/post_notifier/post_notifier.dart';
+import '../routing/routes.dart';
 
 class TopPage extends HookConsumerWidget {
   const TopPage({super.key});
@@ -75,13 +77,18 @@ class ImageFlame extends ConsumerWidget {
       decoration: const BoxDecoration(color: Colors.white),
       child: Column(
         children: [
-          CachedNetworkImage(
-            width: double.infinity,
-            imageUrl: post.postImageUrl,
-            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                CircularProgressIndicator(value: downloadProgress.progress),
-            errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-            fit: BoxFit.cover,
+          InkWell(
+            onTap:() {
+              PostDetailPageRoute(id: post.postId!).push(context);
+            },
+            child: CachedNetworkImage(
+              width: double.infinity,
+              imageUrl: post.postImageUrl,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(7.0),

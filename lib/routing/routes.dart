@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/page/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -71,5 +72,17 @@ class MyPageRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const MyPage();
+  }
+}
+
+class PostDetailPageRoute extends GoRouteData {
+  final String id;
+  const PostDetailPageRoute({required this.id});
+
+  static const path = 'postDetail';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return PostDetailPage(id: id);
   }
 }
