@@ -51,7 +51,7 @@ class LikeNotifier extends _$LikeNotifier {
     state = LikeState.notPress;
   }
 
-  Future<bool> check({
+  Future<String?> check({
     required String postsId,
   }) async {
     final likeRepository = ref.read(likeRepositoryProvider);

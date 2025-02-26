@@ -1,8 +1,11 @@
 import 'package:asahiyama_go/providers/comment_notifier/comment_notifier.dart';
+import 'package:asahiyama_go/providers/like_notifier/like_notifier.dart';
 import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
+import 'package:asahiyama_go/providers/profile_notifier/profile_notifier.dart';
 import 'package:asahiyama_go/ui_core/post_comment_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -54,7 +57,7 @@ class PostDetailPage extends ConsumerWidget {
   }
 }
 
-class PostInformation extends StatelessWidget {
+class PostInformation extends HookConsumerWidget {
   final Post post;
   final String id;
   const PostInformation({
@@ -64,7 +67,20 @@ class PostInformation extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final isLike = useState<String?>(null);
+    final likeNotifier = ref.watch(likeNotifierProvider.notifier);
+    final profile = ref.watch(profileNotifierProvider).valueOrNull;
+
+    useEffect(() {
+      likeNotifier.check(postsId: id).then((value) {
+        isLike.value = value;
+      });
+
+      return null;
+    }, []);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: const BoxDecoration(color: Colors.white),
@@ -107,6 +123,33 @@ class PostInformation extends StatelessWidget {
                 icon: const Icon(Icons.message, color: Colors.grey),
               ),
               Text('${post.commentCount}', style: const TextStyle(fontSize: 20)),
+              const Spacer(),
+              isLike.value != null ?
+              IconButton(
+                  onPressed: () {
+                    ref.read(likeNotifierProvider.notifier).decrement(
+                        postsId: id,
+                        likesId: isLike.value!,
+                        category: post.category,
+                    );
+                  },
+                  icon: const Icon(Icons.favorite, color: Colors.pinkAccent)
+              ):
+              IconButton(
+                  onPressed: () {
+                    ref.read(likeNotifierProvider.notifier).increment(
+                        name: profile!.name!,
+                        postsId: id,
+                        postImageUrl: post.postImageUrl,
+                        targetUserId: post.userId,
+                        pushToken: post.pushToken,
+                        category: post.category,
+                        notificationId: ''
+                    );
+                  },
+                  icon: const Icon(Icons.favorite)
+              ),
+              const Gap(5),
             ],
           ),
         ],

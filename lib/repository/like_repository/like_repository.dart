@@ -148,12 +148,12 @@ final class LikeRepository {
     });
   }
 
-  Future<bool> check({
+  Future<String?> check({
     required String postsId,
   }) async {
     User? user = _authInstance.currentUser;
     if (user == null) {
-      return false;
+      return null;
     }
     final docSnapshot =  await  _fireStoreInstance
         .collection('Users')
@@ -162,7 +162,11 @@ final class LikeRepository {
         .doc(postsId)
         .get();
 
-    return docSnapshot.exists;
+    if (docSnapshot.exists) {
+      return docSnapshot.data()?['likesId'] as String?;
+    } else {
+      return null;
+    }
   }
 
 }
