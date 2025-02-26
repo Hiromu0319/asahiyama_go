@@ -92,11 +92,11 @@ class ImageFlame extends ConsumerWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(7.0),
-            child: Align(alignment: Alignment.centerLeft, child: Text(post.name))),
+            child: Align(alignment: Alignment.centerLeft, child: Text(post.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)))),
           if (post.message != '')
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Text(post.message!),),
+            child: Align(alignment: Alignment.centerLeft, child: Text(post.message!, style: const TextStyle(fontSize: 15)))),
           Row(
             children: [
               const Gap(5),

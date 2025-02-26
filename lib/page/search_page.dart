@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../const/const.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../routing/routes.dart';
 
@@ -12,60 +13,6 @@ class SearchPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final List<String> categories = [
-      "ホッキョクグマ",
-      "トナカイ",
-      "シロフクロウ",
-      "カバ",
-      "キリン",
-      "ライオン",
-      "シロフクロウ",
-      "ブラッザグエノン",
-      "チンパンジー",
-      "アビシニアコロンブス",
-      "ワオキツネザル",
-      "ダチョウ",
-      "ヨーロッパフラミンゴ",
-      "マヌルネコ",
-      "エゾモモンガ",
-      "タンチョウ",
-      "ゴマフアザラシ",
-      "アムールトラ",
-      "アムールヒョウ",
-      "ユキヒョウ",
-      "ボルネオオランウータン",
-      "シロテテナガザル",
-      "キョン",
-      "シセンレッサーバンダ",
-      "ニホンザル",
-      "エゾシカ",
-      "エゾヒグマ",
-      "キタキツネ",
-      "エゾタヌキ",
-      "エゾユキウサギ",
-      "エゾクロテン",
-      "エゾリス",
-      "エゾフクロウ",
-      "シマフクロウ",
-      "オオワシ",
-      "オジロワシ",
-      "クマタカ",
-      "オオハクチョウ",
-      "キンクロハジロ",
-      "インドクジャク",
-      "アオダイショウ",
-      "シンリンオオカミ",
-      "アライグマ",
-      "ジェフロイクモザル",
-      "カピバラ",
-      "フンボルトペンギン",
-      "チリーフラミンゴ",
-      "ベニイロフラミンゴ",
-      "キングペンギン",
-      "ジェンツーペンギン",
-      "イワトビペンギン"
-    ];
 
     final selectedCategory = useState<String?>(null);
 

@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../const/const.dart';
+import '../providers/profile_notifier/profile_notifier.dart';
 import '../ui_core/error_dialog.dart';
 
 class PostPage extends HookConsumerWidget {
@@ -15,8 +16,11 @@ class PostPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    final selectedCategory = useState<String?>(null);
     final image = useState<XFile?>(null);
     final commentController = useTextEditingController();
+
+    final profile = ref.watch(profileNotifierProvider).valueOrNull;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -72,7 +76,40 @@ class PostPage extends HookConsumerWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(50),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 2,
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedCategory.value,
+                    hint: const Text("種類を選択"),
+                    isExpanded: true,
+                    items: categories.map((category) {
+                      return DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      selectedCategory.value = newValue;
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               child: TextFormField(
                 controller: commentController,
                 maxLines: 5,
@@ -89,7 +126,20 @@ class PostPage extends HookConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: ElevatedButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    try {
+                      ref.read(postNotifierProvider.notifier).upload(
+                          category: selectedCategory.value!,
+                          name: profile!.name!,
+                          image: image.value!,
+                          message: commentController.value.text,
+                          pushToken: 'a');
+                    } catch (e) {
+                      if (context.mounted) {
+                        ErrorDialog.show(context: context, message: '失敗しました。');
+                      }
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.blue,

@@ -98,6 +98,13 @@ final class PostRepository {
         )
         .set(post);
 
+    await  _fireStoreInstance
+        .collection('Users')
+        .doc(user.uid)
+        .update({
+          'postCount': FieldValue.increment(1),
+        });
+
   }
 
   Future<Post?> postInformation({

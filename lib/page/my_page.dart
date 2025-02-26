@@ -90,9 +90,14 @@ class MyPage extends HookConsumerWidget {
                         elevation: 3,
                         child: ListTile(
                           title: Text(data[index]!.message!),
-                          trailing: const Icon(Icons.delete),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+
+                            },
+                          ),
                           onTap: () {
-                        
+                            PostDetailPageRoute(id: data[index]!.postsId).push(context);
                           },
                         ),
                       );
@@ -107,24 +112,29 @@ class MyPage extends HookConsumerWidget {
                   return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        decoration: const BoxDecoration(color: Colors.white),
-                        child: Column(
-                          children: [
-                            CachedNetworkImage(
-                              width: double.infinity,
-                              imageUrl: data[index]!.postImageUrl,
-                              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                  CircularProgressIndicator(value: downloadProgress.progress),
-                              errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-                              fit: BoxFit.cover,
-                            ),
-                            if (data[index]!.message != '')
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(data[index]!.message!),),
-                          ],
+                      return GestureDetector(
+                        onTap: () {
+                          PostDetailPageRoute(id: data[index]!.postsId).push(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          decoration: const BoxDecoration(color: Colors.white),
+                          child: Column(
+                            children: [
+                              CachedNetworkImage(
+                                width: double.infinity,
+                                imageUrl: data[index]!.postImageUrl,
+                                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(value: downloadProgress.progress),
+                                errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+                                fit: BoxFit.cover,
+                              ),
+                              if (data[index]!.message != '')
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(data[index]!.message!),),
+                            ],
+                          ),
                         ),
                       );
                     },
