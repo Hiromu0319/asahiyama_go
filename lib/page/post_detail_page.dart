@@ -1,5 +1,6 @@
 import 'package:asahiyama_go/providers/comment_notifier/comment_notifier.dart';
 import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
+import 'package:asahiyama_go/ui_core/post_comment_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -31,7 +32,7 @@ class PostDetailPage extends ConsumerWidget {
             data: (data) {
               return SliverToBoxAdapter(
                   child: data != null ?
-                      PostInformation(post: data):
+                      PostInformation(post: data, id: id):
                       const Center(child: Text('データが見つかりませんでした。'))
               );
             },
@@ -55,8 +56,10 @@ class PostDetailPage extends ConsumerWidget {
 
 class PostInformation extends StatelessWidget {
   final Post post;
+  final String id;
   const PostInformation({
     required this.post,
+    required this.id,
     super.key
   });
 
@@ -89,8 +92,20 @@ class PostInformation extends StatelessWidget {
               const Gap(5),
               Text('${post.likeCount}', style: const TextStyle(fontSize: 20)),
               const Gap(10),
-              const Icon(Icons.message, color: Colors.grey),
-              const Gap(5),
+              IconButton(
+                onPressed: () async {
+                  await showModalBottomSheet<void>(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      enableDrag: true,
+                      barrierColor: Colors.black.withOpacity(0.5),
+                      builder: (context) {
+                        return PostCommentBottomSheet(post: post, id: id);
+                      });
+                },
+                icon: const Icon(Icons.message, color: Colors.grey),
+              ),
               Text('${post.commentCount}', style: const TextStyle(fontSize: 20)),
             ],
           ),
@@ -122,7 +137,14 @@ class CommentLog extends ConsumerWidget {
           child: ListTile(
             title: ref.watch(commentInformationProvider(id:comments![index])).when(
               data: (data) {
-                return Text(data!.message);
+                return Text(data!.message, style: const TextStyle(fontWeight: FontWeight.bold));
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, _) => Text("エラー: $error"),
+            ),
+            subtitle: ref.watch(commentInformationProvider(id:comments![index])).when(
+              data: (data) {
+                return Text(data!.name);
               },
               loading: () => const CircularProgressIndicator(),
               error: (error, _) => Text("エラー: $error"),
