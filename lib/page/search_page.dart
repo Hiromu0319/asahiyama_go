@@ -2,6 +2,7 @@ import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../const/const.dart';
@@ -89,13 +90,30 @@ class SearchPage extends HookConsumerWidget {
                   },
                   childCount: data.length,
                 ),
-              ) : const SliverToBoxAdapter(child: Text("画像はありません"));
+              ) : const SliverToBoxAdapter(child: NoImage());
             },
-            loading: () => const SliverToBoxAdapter(child: CircularProgressIndicator()),
+            loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
             error: (error, _) => SliverToBoxAdapter(child: Text("エラー: $error")),
           )
         ],
       ),
+    );
+  }
+}
+
+class NoImage extends StatelessWidget {
+  const NoImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Gap(30),
+        Icon(Icons.search_off, size: 50),
+        Gap(10),
+        Text('検索結果はありません')
+      ],
     );
   }
 }

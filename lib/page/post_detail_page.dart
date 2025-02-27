@@ -43,7 +43,7 @@ class PostDetailPage extends ConsumerWidget {
               return SliverToBoxAdapter(
                   child: data != null ?
                       PostInformation(post: data, id: id):
-                      const Center(child: Text('データが見つかりませんでした。'))
+                      const Center(child: Text('削除ずみの投稿です。'))
               );
             },
             loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
@@ -52,8 +52,7 @@ class PostDetailPage extends ConsumerWidget {
           postInformation.when(
             data: (data) {
               return data != null ?
-              CommentLog(comments: data.comments):
-              const SliverToBoxAdapter(child: Center(child: Text('コメントが見つかりませんでした。')));
+              CommentLog(comments: data.comments): const SliverToBoxAdapter(child: SizedBox.shrink());
             },
             loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
             error: (error, _) => SliverToBoxAdapter(child: Text("エラー: $error")),
