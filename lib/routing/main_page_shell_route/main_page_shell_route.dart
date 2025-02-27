@@ -33,13 +33,6 @@ part 'main_page_shell_route.g.dart';
       ),
       TypedStatefulShellBranch<StatefulShellBranchData>(
         routes: [
-          TypedGoRoute<NotificationPageRoute>(
-            path: NotificationPageRoute.path,
-          ),
-        ],
-      ),
-      TypedStatefulShellBranch<StatefulShellBranchData>(
-        routes: [
           TypedGoRoute<MyPageRoute>(
             path: MyPageRoute.path,
             routes: [

@@ -77,10 +77,6 @@ class MainPage extends HookConsumerWidget {
             label: '',
           ),
           NavigationDestination(
-            icon: Icon(Icons.notifications),
-            label: '',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.account_circle),
             label: '',
           ),

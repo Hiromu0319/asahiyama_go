@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../page/sign_in_page.dart';
 import '../page/my_page.dart';
-import '../page/notification_page.dart';
 import '../page/post_page.dart';
 import '../page/search_page.dart';
 import '../page/top_page.dart';
@@ -50,17 +49,6 @@ class PostPageRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const PostPage();
-  }
-}
-
-class NotificationPageRoute extends GoRouteData {
-  const NotificationPageRoute();
-
-  static const path = '/notification';
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const NotificationPage();
   }
 }
 
