@@ -60,6 +60,7 @@ final class ProfileRepository {
         .collection('Users')
         .doc(user.uid)
         .collection('posts')
+        .orderBy('createdAt', descending: true)
         .get();
     final posts = postsSnapshot.docs.map((doc) => Post.fromDocumentSnapshot(doc)).toList();
     return posts;
@@ -105,6 +106,7 @@ final class ProfileRepository {
         .collection('Users')
         .doc(user.uid)
         .collection('likes')
+        .orderBy('createdAt', descending: true)
         .get();
     final likes = likesSnapshot.docs.map((doc) => Like.fromDocumentSnapshot(doc)).toList();
     return likes;
@@ -119,6 +121,7 @@ final class ProfileRepository {
         .collection('Users')
         .doc(user.uid)
         .collection('comments')
+        .orderBy('createdAt', descending: true)
         .get();
     final comments = commentsSnapshot.docs.map((doc) => Comment.fromDocumentSnapshot(doc)).toList();
     return comments;

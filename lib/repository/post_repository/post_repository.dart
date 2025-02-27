@@ -162,10 +162,10 @@ final class PostRepository {
     return postSnapshot.data();
   }
 
-
   Stream<List<Post>> fetch() {
     final collection = _fireStoreInstance.collection('Posts');
     final stream = collection
+        .orderBy('createdAt', descending: true)
         .snapshots()
         .map((e) => e.docs.map((e) => Post.fromJsonAddPostId(e.data(), e.id)).toList());
     return stream;
@@ -176,6 +176,7 @@ final class PostRepository {
   }) {
     final collection = _fireStoreInstance.collection(category);
     final stream = collection
+        .orderBy('createdAt', descending: true)
         .snapshots()
         .map((e) => e.docs.map((e) => Post.fromJsonAddPostId(e.data(), e.id)).toList());
     return stream;
