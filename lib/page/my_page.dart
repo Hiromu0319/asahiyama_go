@@ -52,152 +52,167 @@ class MyPage extends HookConsumerWidget {
             children: [
               myLike.when(
                 data: (data) {
-                  return data.isNotEmpty ?
-                    GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap:() {
-                          PostDetailPageRoute(id: data[index]!.postsId).push(context);
-                        },
-                        child: CachedNetworkImage(
-                          width: double.infinity,
-                          imageUrl: data[index]!.postImageUrl,
-                          progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                          errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-                          fit: BoxFit.cover,
-                        ),
-                      );
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      ref.invalidate(fetchMyLikeProvider);
                     },
-                  ) : const _NoData();
+                    child: data.isNotEmpty ?
+                    GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap:() {
+                            PostDetailPageRoute(id: data[index]!.postsId).push(context);
+                          },
+                          child: CachedNetworkImage(
+                            width: double.infinity,
+                            imageUrl: data[index]!.postImageUrl,
+                            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                            errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                       },
+                    ):const _NoData(),
+                  );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myComment.when(
                 data: (data) {
-                  return data.isNotEmpty ?
-                  ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        color: Colors.white,
-                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        elevation: 3,
-                        child: ListTile(
-                          title: Text(data[index]!.message!),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              CheckDialog.show(
-                                  context: context,
-                                  message: 'コメントを削除しますか？',
-                                  onOk: () async {
-                                    try {
-                                      await ref.read(commentNotifierProvider.notifier).delete(
-                                          commentsId: data[index]!.commentsId,
-                                          postsId: data[index]!.postsId,
-                                          category: data[index]!.category
-                                      );
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          customSnackBar("コメントを削除しました"),
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      ref.invalidate(fetchMyCommentProvider);
+                    },
+                    child: data.isNotEmpty ?
+                    ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Colors.white,
+                          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 3,
+                          child: ListTile(
+                            title: Text(data[index]!.message!),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                CheckDialog.show(
+                                    context: context,
+                                    message: 'コメントを削除しますか？',
+                                    onOk: () async {
+                                      try {
+                                        await ref.read(commentNotifierProvider.notifier).delete(
+                                            commentsId: data[index]!.commentsId,
+                                            postsId: data[index]!.postsId,
+                                            category: data[index]!.category
                                         );
-                                      }
-                                    } catch (e) {
-                                      if (context.mounted) {
-                                        ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            customSnackBar("コメントを削除しました"),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
+                                        }
                                       }
                                     }
-                                  }
-                              );
+                                );
+                              },
+                            ),
+                            onTap: () {
+                              PostDetailPageRoute(id: data[index]!.postsId).push(context);
                             },
                           ),
-                          onTap: () {
-                            PostDetailPageRoute(id: data[index]!.postsId).push(context);
-                          },
-                        ),
-                      );
-                    },
-                  ) : const _NoData();
+                        );
+                      },
+                    ) : const _NoData(),
+                  );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myPost.when(
                 data: (data) {
-                  return data.isNotEmpty ?
-                  ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          PostDetailPageRoute(id: data[index]!.postsId).push(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          decoration: const BoxDecoration(color: Colors.white),
-                          child: Column(
-                            children: [
-                              CachedNetworkImage(
-                                width: double.infinity,
-                                imageUrl: data[index]!.postImageUrl,
-                                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(value: downloadProgress.progress),
-                                errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
-                                fit: BoxFit.cover,
-                              ),
-                              Row(
-                                children: [
-                                  if (data[index]!.message != '')
-                                    Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Text(data[index]!.message!),),
-                                  const Spacer(),
-                                  IconButton(
-                                      onPressed: () {
-                                        CheckDialog.show(
-                                            context: context,
-                                            message: '投稿を削除しますか？',
-                                            onOk: () async {
-                                              try {
-                                                await ref.read(postNotifierProvider.notifier).delete(
-                                                    postsId: data[index]!.postsId,
-                                                    category: data[index]!.category,
-                                                    imagePath: data[index]!.imagePath);
-                                                if (context.mounted) {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    customSnackBar("投稿を削除しました"),
-                                                  );
-                                                }
-                                              } catch (e) {
-                                                if (context.mounted) {
-                                                  ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      ref.invalidate(fetchMyPostProvider);
+                    },
+                    child: data.isNotEmpty ?
+                    ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            PostDetailPageRoute(id: data[index]!.postsId).push(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            decoration: const BoxDecoration(color: Colors.white),
+                            child: Column(
+                              children: [
+                                CachedNetworkImage(
+                                  width: double.infinity,
+                                  imageUrl: data[index]!.postImageUrl,
+                                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                      CircularProgressIndicator(value: downloadProgress.progress),
+                                  errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
+                                  fit: BoxFit.cover,
+                                ),
+                                Row(
+                                  children: [
+                                    if (data[index]!.message != '')
+                                      Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Text(data[index]!.message!),),
+                                    const Spacer(),
+                                    IconButton(
+                                        onPressed: () {
+                                          CheckDialog.show(
+                                              context: context,
+                                              message: '投稿を削除しますか？',
+                                              onOk: () async {
+                                                try {
+                                                  await ref.read(postNotifierProvider.notifier).delete(
+                                                      postsId: data[index]!.postsId,
+                                                      category: data[index]!.category,
+                                                      imagePath: data[index]!.imagePath);
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      customSnackBar("投稿を削除しました"),
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  if (context.mounted) {
+                                                    ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
+                                                  }
                                                 }
                                               }
-                                            }
-                                        );
-                                      },
-                                      icon: const Icon(Icons.delete)
-                                  ),
-                                  const Gap(10),
-                                ],
-                              ),
-                            ],
+                                          );
+                                        },
+                                        icon: const Icon(Icons.delete)
+                                    ),
+                                    const Gap(10),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ) : const _NoData();
+                        );
+                      },
+                    ) : const _NoData(),
+                  );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
@@ -415,20 +430,27 @@ class _NoData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 200),
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blue,
-            width: 2.0,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 200),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.blue,
+                  width: 2.0,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white
+            ),
+            child: const Center(
+              child: Text('データがありません。\n※未登録ユーザーの方は、\nアカウント登録後、\n以降の履歴が表示されます。',
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            ),
           ),
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white
-      ),
-      child: const Center(
-        child: Text('データがありません。\n※未登録ユーザーの方は、\nアカウント登録後、\n以降の履歴が表示されます。',
-            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-      ),
+        );
+      },
     );
   }
 }
