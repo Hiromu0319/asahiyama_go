@@ -107,6 +107,45 @@ final class PostRepository {
 
   }
 
+  Future<void> delete({
+    required String postsId,
+    required String category,
+    required String imagePath,
+  }) async {
+    User? user = _authInstance.currentUser;
+    if (user == null) {
+      return;
+    }
+    await _fireStorageInstance
+        .ref('img/${basename(imagePath)}')
+        .delete();
+
+    await _fireStoreInstance
+        .collection('Posts')
+        .doc(postsId)
+        .delete();
+
+    await  _fireStoreInstance
+        .collection('Users')
+        .doc(user.uid)
+        .collection('posts')
+        .doc(postsId)
+        .delete();
+
+    await  _fireStoreInstance
+        .collection(category)
+        .doc(postsId)
+        .delete();
+
+    await  _fireStoreInstance
+        .collection('Users')
+        .doc(user.uid)
+        .update({
+          'postCount': FieldValue.increment(-1),
+        });
+
+  }
+
   Future<Post?> postInformation({
     required String id,
   }) async {

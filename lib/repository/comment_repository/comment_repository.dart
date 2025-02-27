@@ -131,6 +131,13 @@ final class CommentRepository {
         .delete();
 
     await  _fireStoreInstance
+        .collection('Users')
+        .doc(user.uid)
+        .update({
+         'commentCount': FieldValue.increment(-1),
+        });
+
+    await  _fireStoreInstance
         .collection('Posts')
         .doc(postsId)
         .update({
@@ -146,12 +153,6 @@ final class CommentRepository {
          'comments': FieldValue.arrayRemove([commentsId]),
         });
 
-    await  _fireStoreInstance
-        .collection('Users')
-        .doc(user.uid)
-        .update({
-         'commentCount': FieldValue.increment(-1),
-        });
   }
 
   Future<Comment?> commentInformation({

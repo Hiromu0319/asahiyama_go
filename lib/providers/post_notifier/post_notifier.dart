@@ -46,6 +46,23 @@ class PostNotifier extends _$PostNotifier {
     state = PostState.notPress;
   }
 
+  Future<void> delete({
+    required String postsId,
+    required String category,
+    required String imagePath,
+  }) async {
+    state = PostState.loading;
+
+    final postRepository = ref.read(postRepositoryProvider);
+    await postRepository.delete(
+      postsId: postsId,
+      category: category,
+      imagePath: imagePath,
+    );
+
+    state = PostState.notPress;
+  }
+
 }
 
 enum PostState {

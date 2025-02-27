@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
 import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -132,10 +133,25 @@ class MyPage extends HookConsumerWidget {
                                 errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
                                 fit: BoxFit.cover,
                               ),
-                              if (data[index]!.message != '')
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(data[index]!.message!),),
+                              Row(
+                                children: [
+                                  if (data[index]!.message != '')
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(data[index]!.message!),),
+                                  const Spacer(),
+                                  IconButton(
+                                      onPressed: () {
+                                        ref.read(postNotifierProvider.notifier).delete(
+                                            postsId: data[index]!.postsId,
+                                            category: data[index]!.category,
+                                            imagePath: data[index]!.imagePath);
+                                      },
+                                      icon: const Icon(Icons.delete)
+                                  ),
+                                  const Gap(10),
+                                ],
+                              ),
                             ],
                           ),
                         ),
