@@ -1,5 +1,3 @@
-import 'package:asahiyama_go/const/const.dart';
-import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
 import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,11 +6,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../const/const.dart';
 import '../model/profile/profile.dart';
 import '../providers/auth_notifier/auth_notifier.dart';
 import '../providers/comment_notifier/comment_notifier.dart';
+import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
 import '../routing/routes.dart';
+import '../ui_core/check_dialog.dart';
 import '../ui_core/custom_snackbar.dart';
 import '../ui_core/error_dialog.dart';
 
@@ -96,23 +97,29 @@ class MyPage extends HookConsumerWidget {
                           title: Text(data[index]!.message!),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
-                            onPressed: () async {
-                              try {
-                                await ref.read(commentNotifierProvider.notifier).delete(
-                                    commentsId: data[index]!.commentsId,
-                                    postsId: data[index]!.postsId,
-                                    category: data[index]!.category
-                                );
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    customSnackBar("コメントを削除しました"),
-                                  );
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
-                                }
-                              }
+                            onPressed: () {
+                              CheckDialog.show(
+                                  context: context,
+                                  message: 'コメントを削除しますか？',
+                                  onOk: () async {
+                                    try {
+                                      await ref.read(commentNotifierProvider.notifier).delete(
+                                          commentsId: data[index]!.commentsId,
+                                          postsId: data[index]!.postsId,
+                                          category: data[index]!.category
+                                      );
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          customSnackBar("コメントを削除しました"),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
+                                      }
+                                    }
+                                  }
+                              );
                             },
                           ),
                           onTap: () {
@@ -157,22 +164,28 @@ class MyPage extends HookConsumerWidget {
                                       child: Text(data[index]!.message!),),
                                   const Spacer(),
                                   IconButton(
-                                      onPressed: () async {
-                                        try {
-                                          await ref.read(postNotifierProvider.notifier).delete(
-                                              postsId: data[index]!.postsId,
-                                              category: data[index]!.category,
-                                              imagePath: data[index]!.imagePath);
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              customSnackBar("投稿を削除しました"),
-                                            );
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
-                                          }
-                                        }
+                                      onPressed: () {
+                                        CheckDialog.show(
+                                            context: context,
+                                            message: '投稿を削除しますか？',
+                                            onOk: () async {
+                                              try {
+                                                await ref.read(postNotifierProvider.notifier).delete(
+                                                    postsId: data[index]!.postsId,
+                                                    category: data[index]!.category,
+                                                    imagePath: data[index]!.imagePath);
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    customSnackBar("投稿を削除しました"),
+                                                  );
+                                                }
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
+                                                }
+                                              }
+                                            }
+                                        );
                                       },
                                       icon: const Icon(Icons.delete)
                                   ),
@@ -289,24 +302,30 @@ class MyPage extends HookConsumerWidget {
                 ),
                 onPressed: () async {
                   if (profile != null) {
-                    try {
-                      await ref.read(authNotifierProvider.notifier).delete(id: profile.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          customSnackBar("アカウントを削除しました"),
-                        );
-                        await Future.delayed(const Duration(seconds: 2));
-                        if (!context.mounted) return;
-                        const SignInPageRoute().go(context);
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ErrorDialog.show(
-                            context: context,
-                            message: 'アカウントの削除に失敗しました。'
-                        );
-                      }
-                    }
+                    CheckDialog.show(
+                        context: context,
+                        message: 'アカウントを削除しますか？\n投稿した内容、コメントは\n自動削除されません。',
+                        onOk: () async {
+                          try {
+                            await ref.read(authNotifierProvider.notifier).delete(id: profile.id);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                customSnackBar("アカウントを削除しました"),
+                              );
+                              await Future.delayed(const Duration(seconds: 2));
+                              if (!context.mounted) return;
+                              const SignInPageRoute().go(context);
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ErrorDialog.show(
+                                  context: context,
+                                  message: 'アカウントの削除に失敗しました。'
+                              );
+                            }
+                          }
+                        }
+                    );
                   }
                 },
                 child: const Row(

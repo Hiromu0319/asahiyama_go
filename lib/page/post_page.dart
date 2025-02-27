@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:asahiyama_go/ui_core/check_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -133,30 +134,36 @@ class PostPage extends HookConsumerWidget {
                       onPressed: () async {
                         if (profile!.type == 0) return;
 
-                        try {
-                          ref.read(postNotifierProvider.notifier).upload(
-                              category: selectedCategory.value!,
-                              name: profile.name!,
-                              image: image.value!,
-                              message: commentController.value.text,
-                              pushToken: 'a');
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              customSnackBar("画像の投稿が完了しました"),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
-                          }
-                        }
+                        CheckDialog.show(
+                            context: context,
+                            message: 'この内容で\n投稿しますか？',
+                            onOk: () async {
+                              try {
+                                await ref.read(postNotifierProvider.notifier).upload(
+                                    category: selectedCategory.value!,
+                                    name: profile.name!,
+                                    image: image.value!,
+                                    message: commentController.value.text,
+                                    pushToken: 'a');
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    customSnackBar("画像の投稿が完了しました"),
+                                  );
+                                }
 
-                        await Future.delayed(const Duration(seconds: 2));
+                                await Future.delayed(const Duration(seconds: 2));
 
-                        image.value = null;
-                        selectedCategory.value = null;
-                        commentController.clear();
+                                image.value = null;
+                                selectedCategory.value = null;
+                                commentController.clear();
 
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
+                                }
+                              }
+                            }
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,

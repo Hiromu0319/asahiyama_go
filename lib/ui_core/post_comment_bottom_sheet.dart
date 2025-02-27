@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/ui_core/check_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,7 +34,7 @@ class PostCommentBottomSheet extends HookConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Send a comment on a great photo!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          const Text('コメントを投稿しよう！!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           Padding(
             padding: const EdgeInsets.all(30),
             child: TextFormField(
@@ -53,28 +54,36 @@ class PostCommentBottomSheet extends HookConsumerWidget {
                   await _anonymousUserAlertDialog(context); return;
                 }
 
-                try {
-                  ref.read(commentNotifierProvider.notifier).post(
-                      name: profile.name ?? '',
-                      postsId: id,
-                      postImageUrl: post.postImageUrl,
-                      targetUserId: post.userId,
-                      pushToken: post.pushToken,
-                      category: post.category,
-                      notificationId: '',
-                      message: commentController.value.text
-                  );
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customSnackBar("コメントを送信しました"),
-                    );
-                  }
-                } on Exception catch (e) {
-                  if (context.mounted) {
-                    ErrorDialog.show(
-                        context: context, message: e.toString());
-                  }
-                }
+                CheckDialog.show(
+                    context: context,
+                    message: 'この内容で\nコメントを投稿しますか？',
+                    onOk: () async {
+                      try {
+                        await ref.read(commentNotifierProvider.notifier).post(
+                            name: profile.name ?? '',
+                            postsId: id,
+                            postImageUrl: post.postImageUrl,
+                            targetUserId: post.userId,
+                            pushToken: post.pushToken,
+                            category: post.category,
+                            notificationId: '',
+                            message: commentController.value.text
+                        );
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            customSnackBar("コメントを送信しました"),
+                          );
+                        }
+                      } on Exception catch (e) {
+                        if (context.mounted) {
+                          ErrorDialog.show(
+                              context: context, message: e.toString());
+                        }
+                      }
+                    }
+                );
+
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,

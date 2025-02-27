@@ -1,4 +1,5 @@
 import 'package:asahiyama_go/providers/auth_notifier/auth_notifier.dart';
+import 'package:asahiyama_go/ui_core/check_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -223,29 +224,31 @@ class _BottomSheet extends HookConsumerWidget {
           const Gap(30),
           ElevatedButton(
               onPressed: () async {
-                try {
-                  await ref.read(authNotifierProvider.notifier).signUp(
-                      name: nameController.value.text,
-                      email: emailController.value.text,
-                      password: passwordController.value.text);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customSnackBar("新規登録しました"),
-                    );
-                    await Future.delayed(const Duration(seconds: 2));
-                    if (!context.mounted) return;
-                    const TopPageRoute().go(context);
-                  }
-                } on FirebaseAuthException catch (e) {
-                  if (context.mounted) {
-                    ErrorDialog.show(
-                        context: context, message: handleException(e));
-                  }
-                }
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
+                CheckDialog.show(
+                    context: context,
+                    message: 'この内容で\n新規登録しますか？',
+                    onOk: () async {
+                      try {
+                        await ref.read(authNotifierProvider.notifier).signUp(
+                            name: nameController.value.text,
+                            email: emailController.value.text,
+                            password: passwordController.value.text);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            customSnackBar("新規登録しました"),
+                          );
+                          await Future.delayed(const Duration(seconds: 2));
+                          if (!context.mounted) return;
+                          const TopPageRoute().go(context);
+                        }
+                      } on FirebaseAuthException catch (e) {
+                        if (context.mounted) {
+                          ErrorDialog.show(
+                              context: context, message: handleException(e));
+                        }
+                      }
+                    }
+                );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
