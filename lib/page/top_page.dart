@@ -83,7 +83,7 @@ class ImageFlame extends ConsumerWidget {
               width: double.infinity,
               imageUrl: post.postImageUrl,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  CircularProgressIndicator(value: downloadProgress.progress),
+                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
               errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
               fit: BoxFit.cover,
             ),

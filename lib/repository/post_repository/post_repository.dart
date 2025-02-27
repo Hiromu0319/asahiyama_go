@@ -166,6 +166,7 @@ final class PostRepository {
     final collection = _fireStoreInstance.collection('Posts');
     final stream = collection
         .orderBy('createdAt', descending: true)
+        .limit(100)
         .snapshots()
         .map((e) => e.docs.map((e) => Post.fromJsonAddPostId(e.data(), e.id)).toList());
     return stream;

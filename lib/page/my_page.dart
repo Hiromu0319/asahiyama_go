@@ -50,7 +50,8 @@ class MyPage extends HookConsumerWidget {
             children: [
               myLike.when(
                 data: (data) {
-                  return GridView.builder(
+                  return data.isNotEmpty ?
+                    GridView.builder(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 8,
@@ -72,14 +73,15 @@ class MyPage extends HookConsumerWidget {
                         ),
                       );
                     },
-                  );
+                  ) : const _NoData();
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myComment.when(
                 data: (data) {
-                  return ListView.builder(
+                  return data.isNotEmpty ?
+                  ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return Card(
@@ -113,14 +115,15 @@ class MyPage extends HookConsumerWidget {
                         ),
                       );
                     },
-                  );
+                  ) : const _NoData();
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myPost.when(
                 data: (data) {
-                  return ListView.builder(
+                  return data.isNotEmpty ?
+                  ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
@@ -170,7 +173,7 @@ class MyPage extends HookConsumerWidget {
                         ),
                       );
                     },
-                  );
+                  ) : const _NoData();;
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
@@ -190,9 +193,10 @@ class MyPage extends HookConsumerWidget {
               ),
               child: Text('My Page', style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
+            if (profile == null || profile.type != 0)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.blue,
@@ -200,32 +204,21 @@ class MyPage extends HookConsumerWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                onPressed: () async {
-                  if (profile != null) {
-                    if (profile.type != 0) {
-                      try {
-                        await ref.read(authNotifierProvider.notifier).signOut();
-                        if (context.mounted) {
-                          const SignInPageRoute().go(context);
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ErrorDialog.show(
-                              context: context,
-                              message: 'ログアウトできません'
-                          );
-                        }
+                  onPressed: () async {
+                    try {
+                      await ref.read(authNotifierProvider.notifier).signOut();
+                      if (context.mounted) {
+                        const SignInPageRoute().go(context);
                       }
-                    } else {
+                    } catch (e) {
                       if (context.mounted) {
                         ErrorDialog.show(
                             context: context,
-                            message: 'このユーザーはアカウントの削除が必要です。'
+                            message: 'ログアウトできません'
                         );
                       }
                     }
-                  }
-                },
+                  },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -234,9 +227,9 @@ class MyPage extends HookConsumerWidget {
                       Text('ログアウト')
                     ],
                   ),
+                ),
               ),
-            ),
-            if (profile!.type == 0)
+            if (profile == null || profile.type == 0)
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ElevatedButton(
@@ -313,6 +306,8 @@ class MyPage extends HookConsumerWidget {
 
   //header部分
   Widget _headerSection(Profile? profile) {
+    if (profile == null) return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+
     return SliverList(
       delegate: SliverChildListDelegate(
         [
@@ -326,7 +321,7 @@ class MyPage extends HookConsumerWidget {
                 const Gap(15),
                 const Icon(Icons.favorite, color: Colors.pinkAccent),
                 const Gap(5),
-                Text('${profile!.likeCount ?? 0}', style: const TextStyle(color: Colors.white)),
+                Text('${profile.likeCount ?? 0}', style: const TextStyle(color: Colors.white)),
                 const Gap(15),
                 const Icon(Icons.message, color: Colors.grey),
                 const Gap(5),
@@ -374,6 +369,30 @@ class MyPage extends HookConsumerWidget {
   }
 
 }
+
+class _NoData extends StatelessWidget {
+  const _NoData();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 200),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white
+      ),
+      child: const Center(
+        child: Text('データがありません。\n※未登録ユーザーの方は、\nアカウント登録後、\n以降の履歴が表示されます。',
+            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+      ),
+    );
+  }
+}
+
 
 class _BottomSheet extends HookConsumerWidget {
   @override

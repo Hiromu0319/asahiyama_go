@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -125,36 +126,45 @@ class PostPage extends HookConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ref.read(postNotifierProvider.notifier).upload(
-                          category: selectedCategory.value!,
-                          name: profile!.name!,
-                          image: image.value!,
-                          message: commentController.value.text,
-                          pushToken: 'a');
-                    } catch (e) {
-                      if (context.mounted) {
-                        ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
-                      }
-                    }
+              child: Column(
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (profile.type == 0) return;
 
-                    await Future.delayed(const Duration(seconds: 2));
+                        try {
+                          ref.read(postNotifierProvider.notifier).upload(
+                              category: selectedCategory.value!,
+                              name: profile.name!,
+                              image: image.value!,
+                              message: commentController.value.text,
+                              pushToken: 'a');
+                        } catch (e) {
+                          if (context.mounted) {
+                            ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
+                          }
+                        }
 
-                    image.value = null;
-                    selectedCategory.value = null;
-                    commentController.clear();
+                        await Future.delayed(const Duration(seconds: 2));
 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                        image.value = null;
+                        selectedCategory.value = null;
+                        commentController.clear();
+
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: (profile == null && profile!.type != 0) ? Colors.blue : Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text('投稿')
                   ),
-                  child: const Text('投稿')
+                  const Gap(5),
+                  if (profile.type == 0)
+                    const Text('未登録ユーザーの方は、\n写真の投稿機能は利用できません。', style: TextStyle(color: Colors.redAccent), textAlign: TextAlign.center)
+                ],
               ),
             ),
           )

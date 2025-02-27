@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../model/post/post.dart';
@@ -48,10 +47,14 @@ class PostCommentBottomSheet extends HookConsumerWidget {
             ),
           ),
           ElevatedButton(
-              onPressed: (){
+              onPressed: () async {
+                if (profile == null || profile.type == 0) {
+                  await _anonymousUserAlertDialog(context); return;
+                }
+
                 try {
                   ref.read(commentNotifierProvider.notifier).post(
-                      name: profile!.name ?? '',
+                      name: profile.name ?? '',
                       postsId: id,
                       postImageUrl: post.postImageUrl,
                       targetUserId: post.userId,
@@ -80,4 +83,12 @@ class PostCommentBottomSheet extends HookConsumerWidget {
       ),
     );
   }
+
+  Future<void> _anonymousUserAlertDialog(BuildContext context) async {
+    ErrorDialog.show(
+        context: context,
+        message: '未登録ユーザーの方は、\nコメント機能を\nご利用いただけません。\nマイページから、\nアカウント登録を\nお願いいたします。'
+    );
+  }
+
 }

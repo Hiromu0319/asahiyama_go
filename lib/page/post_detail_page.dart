@@ -102,7 +102,7 @@ class PostInformation extends HookConsumerWidget {
           ),
           Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Align(alignment: Alignment.centerLeft, child: Text(post.name))),
+              child: Align(alignment: Alignment.centerLeft, child: Text('ユーザー：${post.name}'))),
           if (post.message != '')
             Padding(
               padding: const EdgeInsets.all(5.0),
@@ -139,7 +139,11 @@ class PostInformation extends HookConsumerWidget {
               const Gap(5),
               isLike.value != null ?
               IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    if (profile == null || profile.type == 0) {
+                      await _anonymousUserAlertDialog(context); return;
+                    }
+
                     try {
                       ref.read(likeNotifierProvider.notifier).decrement(
                         postsId: id,
@@ -155,10 +159,14 @@ class PostInformation extends HookConsumerWidget {
                   icon: const Icon(Icons.favorite, color: Colors.pinkAccent)
               ):
               IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    if (profile == null || profile.type == 0) {
+                      await _anonymousUserAlertDialog(context); return;
+                    }
+
                     try {
                       ref.read(likeNotifierProvider.notifier).increment(
-                          name: profile!.name!,
+                          name: profile.name!,
                           postsId: id,
                           postImageUrl: post.postImageUrl,
                           targetUserId: post.userId,
@@ -199,6 +207,13 @@ class PostInformation extends HookConsumerWidget {
     } catch (e) {
       log('画像のダウンロードに失敗しました: $e');
     }
+  }
+
+  Future<void> _anonymousUserAlertDialog(BuildContext context) async {
+    ErrorDialog.show(
+        context: context,
+        message: '未登録ユーザーの方は、\nいいね機能を\nご利用いただけません。\nマイページから、\nアカウント登録を\nお願いいたします。'
+    );
   }
 
 }
