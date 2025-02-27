@@ -51,7 +51,7 @@ class TopPage extends HookConsumerWidget {
                   ),
                 );
               },
-            loading: () => const SliverToBoxAdapter(child: const CircularProgressIndicator()),
+            loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
             error: (error, _) => SliverToBoxAdapter(child: Text("エラー: $error")),
           )
         ],

@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../const/const.dart';
 import '../ui_core/error_dialog.dart';
 import '../routing/routes.dart';
 import '../routing/main_page_shell_route/main_page_shell_route.dart';
@@ -69,10 +70,10 @@ class SignInPage extends HookConsumerWidget {
                     if (context.mounted) {
                       const TopPageRoute().go(context);
                     }
-                  } on FirebaseAuthException catch (_) {
+                  } on FirebaseAuthException catch (e) {
                     if (context.mounted) {
                       ErrorDialog.show(
-                          context: context, message: 'ログインに失敗しました。');
+                          context: context, message: handleException(e));
                     }
                   }
                 },
@@ -143,6 +144,7 @@ class SignInPage extends HookConsumerWidget {
       ),
     );
   }
+
 }
 
 class _BottomSheet extends HookConsumerWidget {
@@ -217,10 +219,10 @@ class _BottomSheet extends HookConsumerWidget {
                   if (context.mounted) {
                     const TopPageRoute().go(context);
                   }
-                } on FirebaseAuthException catch (_) {
+                } on FirebaseAuthException catch (e) {
                   if (context.mounted) {
                     ErrorDialog.show(
-                        context: context, message: 'アカウントの作成に失敗しました。');
+                        context: context, message: handleException(e));
                   }
                 }
 

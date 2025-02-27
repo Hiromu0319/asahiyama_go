@@ -14,6 +14,7 @@ import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/like_notifier/like_notifier.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
+import '../ui_core/error_dialog.dart';
 import '../ui_core/post_comment_bottom_sheet.dart';
 
 class PostDetailPage extends ConsumerWidget {
@@ -44,7 +45,7 @@ class PostDetailPage extends ConsumerWidget {
                       const Center(child: Text('データが見つかりませんでした。'))
               );
             },
-            loading: () => const SliverToBoxAdapter(child: CircularProgressIndicator()),
+            loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
             error: (error, _) => SliverToBoxAdapter(child: Text("エラー: $error")),
           ),
           postInformation.when(
@@ -53,7 +54,7 @@ class PostDetailPage extends ConsumerWidget {
               CommentLog(comments: data.comments):
               const SliverToBoxAdapter(child: Center(child: Text('コメントが見つかりませんでした。')));
             },
-            loading: () => const SliverToBoxAdapter(child: CircularProgressIndicator()),
+            loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
             error: (error, _) => SliverToBoxAdapter(child: Text("エラー: $error")),
           ),
         ],
@@ -139,25 +140,37 @@ class PostInformation extends HookConsumerWidget {
               isLike.value != null ?
               IconButton(
                   onPressed: () {
-                    ref.read(likeNotifierProvider.notifier).decrement(
+                    try {
+                      ref.read(likeNotifierProvider.notifier).decrement(
                         postsId: id,
                         likesId: isLike.value!,
                         category: post.category,
-                    );
+                      );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ErrorDialog.show(context: context, message: 'いいねの解除に失敗しました。');
+                      }
+                    }
                   },
                   icon: const Icon(Icons.favorite, color: Colors.pinkAccent)
               ):
               IconButton(
                   onPressed: () {
-                    ref.read(likeNotifierProvider.notifier).increment(
-                        name: profile!.name!,
-                        postsId: id,
-                        postImageUrl: post.postImageUrl,
-                        targetUserId: post.userId,
-                        pushToken: post.pushToken,
-                        category: post.category,
-                        notificationId: ''
-                    );
+                    try {
+                      ref.read(likeNotifierProvider.notifier).increment(
+                          name: profile!.name!,
+                          postsId: id,
+                          postImageUrl: post.postImageUrl,
+                          targetUserId: post.userId,
+                          pushToken: post.pushToken,
+                          category: post.category,
+                          notificationId: ''
+                      );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ErrorDialog.show(context: context, message: 'いいねの登録に失敗しました。');
+                      }
+                    }
                   },
                   icon: const Icon(Icons.favorite)
               ),
@@ -214,14 +227,14 @@ class CommentLog extends ConsumerWidget {
               data: (data) {
                 return Text(data!.message, style: const TextStyle(fontWeight: FontWeight.bold));
               },
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Text("エラー: $error"),
             ),
             subtitle: ref.watch(commentInformationProvider(id:comments![index])).when(
               data: (data) {
                 return Text(data!.name);
               },
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Text("エラー: $error"),
             ),
           ),

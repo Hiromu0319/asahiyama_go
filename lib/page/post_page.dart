@@ -136,7 +136,7 @@ class PostPage extends HookConsumerWidget {
                           pushToken: 'a');
                     } catch (e) {
                       if (context.mounted) {
-                        ErrorDialog.show(context: context, message: '失敗しました。');
+                        ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
                       }
                     }
 
@@ -162,29 +162,6 @@ class PostPage extends HookConsumerWidget {
       ),
     );
 
-    // return Center(
-    //     child: IconButton(
-    //         onPressed: () async {
-    //           final ImagePicker picker = ImagePicker();
-    //           final XFile? image =
-    //               await picker.pickImage(source: ImageSource.gallery);
-    //
-    //           if (image == null) {
-    //             return;
-    //           }
-    //
-    //           try {
-    //             ref.read(postNotifierProvider.notifier).upload(category: 'cat', name: 'あ', image: image, pushToken: 'a');
-    //           } catch (e) {
-    //             if (context.mounted) {
-    //               ErrorDialog.show(context: context, message: '失敗しました。');
-    //             }
-    //           }
-    //
-    //         },
-    //         icon: const Icon(Icons.add)
-    //     ),
-    // );
   }
   
   Widget _noImage() {

@@ -1,3 +1,4 @@
+import 'package:asahiyama_go/const/const.dart';
 import 'package:asahiyama_go/providers/post_notifier/post_notifier.dart';
 import 'package:asahiyama_go/routing/main_page_shell_route/main_page_shell_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -73,7 +74,7 @@ class MyPage extends HookConsumerWidget {
                     },
                   );
                 },
-                loading: () => const CircularProgressIndicator(),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myComment.when(
@@ -93,11 +94,17 @@ class MyPage extends HookConsumerWidget {
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              ref.read(commentNotifierProvider.notifier).delete(
-                                  commentsId: data[index]!.commentsId,
-                                  postsId: data[index]!.postsId,
-                                  category: data[index]!.category
-                              );
+                              try {
+                                ref.read(commentNotifierProvider.notifier).delete(
+                                    commentsId: data[index]!.commentsId,
+                                    postsId: data[index]!.postsId,
+                                    category: data[index]!.category
+                                );
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
+                                }
+                              }
                             },
                           ),
                           onTap: () {
@@ -108,7 +115,7 @@ class MyPage extends HookConsumerWidget {
                     },
                   );
                 },
-                loading: () => const CircularProgressIndicator(),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
               myPost.when(
@@ -142,10 +149,16 @@ class MyPage extends HookConsumerWidget {
                                   const Spacer(),
                                   IconButton(
                                       onPressed: () {
-                                        ref.read(postNotifierProvider.notifier).delete(
-                                            postsId: data[index]!.postsId,
-                                            category: data[index]!.category,
-                                            imagePath: data[index]!.imagePath);
+                                        try {
+                                          ref.read(postNotifierProvider.notifier).delete(
+                                              postsId: data[index]!.postsId,
+                                              category: data[index]!.category,
+                                              imagePath: data[index]!.imagePath);
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
+                                          }
+                                        }
                                       },
                                       icon: const Icon(Icons.delete)
                                   ),
@@ -159,7 +172,7 @@ class MyPage extends HookConsumerWidget {
                     },
                   );
                 },
-                loading: () => const CircularProgressIndicator(),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),
               ),
             ],
@@ -434,10 +447,10 @@ class _BottomSheet extends HookConsumerWidget {
                     if (context.mounted) {
                       const TopPageRoute().go(context);
                     }
-                  } on FirebaseAuthException catch (_) {
+                  } on FirebaseAuthException catch (e) {
                     if (context.mounted) {
                       ErrorDialog.show(
-                          context: context, message: 'アカウントの作成に失敗しました。');
+                          context: context, message: handleException(e));
                     }
                   }
 
