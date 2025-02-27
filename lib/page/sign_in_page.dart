@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../const/const.dart';
+import '../ui_core/custom_snackbar.dart';
 import '../ui_core/error_dialog.dart';
 import '../routing/routes.dart';
 import '../routing/main_page_shell_route/main_page_shell_route.dart';
@@ -67,7 +68,13 @@ class SignInPage extends HookConsumerWidget {
                     await ref.read(authNotifierProvider.notifier).signIn(
                         email: emailController.value.text,
                         password: passwordController.value.text);
+
                     if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar("ログインしました"),
+                      );
+                      await Future.delayed(const Duration(seconds: 2));
+                      if (!context.mounted) return;
                       const TopPageRoute().go(context);
                     }
                   } on FirebaseAuthException catch (e) {
@@ -121,6 +128,11 @@ class SignInPage extends HookConsumerWidget {
                   try {
                     await ref.read(authNotifierProvider.notifier).signInAnonymously();
                     if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar("ログインしました"),
+                      );
+                      await Future.delayed(const Duration(seconds: 2));
+                      if (!context.mounted) return;
                       const TopPageRoute().go(context);
                     }
                   } on FirebaseAuthException catch (_) {
@@ -217,6 +229,11 @@ class _BottomSheet extends HookConsumerWidget {
                       email: emailController.value.text,
                       password: passwordController.value.text);
                   if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      customSnackBar("新規登録しました"),
+                    );
+                    await Future.delayed(const Duration(seconds: 2));
+                    if (!context.mounted) return;
                     const TopPageRoute().go(context);
                   }
                 } on FirebaseAuthException catch (e) {

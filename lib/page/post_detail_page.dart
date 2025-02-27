@@ -14,6 +14,7 @@ import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/like_notifier/like_notifier.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
+import '../ui_core/custom_snackbar.dart';
 import '../ui_core/error_dialog.dart';
 import '../ui_core/post_comment_bottom_sheet.dart';
 
@@ -133,6 +134,11 @@ class PostInformation extends HookConsumerWidget {
               IconButton(
                   onPressed: () async {
                     downloadAndSaveImage(post.postImageUrl);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar("画像をダウンロードしました"),
+                      );
+                    }
                   },
                   icon: const Icon(Icons.download)
               ),
@@ -150,6 +156,11 @@ class PostInformation extends HookConsumerWidget {
                         likesId: isLike.value!,
                         category: post.category,
                       );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          customSnackBar("いいねを解除しました"),
+                        );
+                      }
                     } catch (e) {
                       if (context.mounted) {
                         ErrorDialog.show(context: context, message: 'いいねの解除に失敗しました。');
@@ -174,6 +185,11 @@ class PostInformation extends HookConsumerWidget {
                           category: post.category,
                           notificationId: ''
                       );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          customSnackBar("いいねをしました"),
+                        );
+                      }
                     } catch (e) {
                       if (context.mounted) {
                         ErrorDialog.show(context: context, message: 'いいねの登録に失敗しました。');

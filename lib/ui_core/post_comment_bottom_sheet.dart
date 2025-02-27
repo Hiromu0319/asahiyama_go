@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../model/post/post.dart';
 import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
+import 'custom_snackbar.dart';
 import 'error_dialog.dart';
 
 class PostCommentBottomSheet extends HookConsumerWidget {
@@ -63,6 +64,11 @@ class PostCommentBottomSheet extends HookConsumerWidget {
                       notificationId: '',
                       message: commentController.value.text
                   );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      customSnackBar("コメントを送信しました"),
+                    );
+                  }
                 } on Exception catch (e) {
                   if (context.mounted) {
                     ErrorDialog.show(

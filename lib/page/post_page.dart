@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../const/const.dart';
 import '../providers/post_notifier/post_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
+import '../ui_core/custom_snackbar.dart';
 import '../ui_core/error_dialog.dart';
 
 class PostPage extends HookConsumerWidget {
@@ -130,7 +131,7 @@ class PostPage extends HookConsumerWidget {
                 children: [
                   ElevatedButton(
                       onPressed: () async {
-                        if (profile.type == 0) return;
+                        if (profile!.type == 0) return;
 
                         try {
                           ref.read(postNotifierProvider.notifier).upload(
@@ -139,6 +140,11 @@ class PostPage extends HookConsumerWidget {
                               image: image.value!,
                               message: commentController.value.text,
                               pushToken: 'a');
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              customSnackBar("画像の投稿が完了しました"),
+                            );
+                          }
                         } catch (e) {
                           if (context.mounted) {
                             ErrorDialog.show(context: context, message: '画像のアップロードに\n失敗しました。');
@@ -154,7 +160,7 @@ class PostPage extends HookConsumerWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: (profile == null && profile!.type != 0) ? Colors.blue : Colors.grey,
+                        backgroundColor: (profile == null || profile.type != 0) ? Colors.blue : Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -162,7 +168,7 @@ class PostPage extends HookConsumerWidget {
                       child: const Text('投稿')
                   ),
                   const Gap(5),
-                  if (profile.type == 0)
+                  if (profile!.type == 0)
                     const Text('未登録ユーザーの方は、\n写真の投稿機能は利用できません。', style: TextStyle(color: Colors.redAccent), textAlign: TextAlign.center)
                 ],
               ),

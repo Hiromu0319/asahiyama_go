@@ -13,6 +13,7 @@ import '../providers/auth_notifier/auth_notifier.dart';
 import '../providers/comment_notifier/comment_notifier.dart';
 import '../providers/profile_notifier/profile_notifier.dart';
 import '../routing/routes.dart';
+import '../ui_core/custom_snackbar.dart';
 import '../ui_core/error_dialog.dart';
 
 class MyPage extends HookConsumerWidget {
@@ -95,13 +96,18 @@ class MyPage extends HookConsumerWidget {
                           title: Text(data[index]!.message!),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
-                            onPressed: () {
+                            onPressed: () async {
                               try {
-                                ref.read(commentNotifierProvider.notifier).delete(
+                                await ref.read(commentNotifierProvider.notifier).delete(
                                     commentsId: data[index]!.commentsId,
                                     postsId: data[index]!.postsId,
                                     category: data[index]!.category
                                 );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    customSnackBar("コメントを削除しました"),
+                                  );
+                                }
                               } catch (e) {
                                 if (context.mounted) {
                                   ErrorDialog.show(context: context, message: 'コメントの削除に失敗しました。');
@@ -151,12 +157,17 @@ class MyPage extends HookConsumerWidget {
                                       child: Text(data[index]!.message!),),
                                   const Spacer(),
                                   IconButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         try {
-                                          ref.read(postNotifierProvider.notifier).delete(
+                                          await ref.read(postNotifierProvider.notifier).delete(
                                               postsId: data[index]!.postsId,
                                               category: data[index]!.category,
                                               imagePath: data[index]!.imagePath);
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              customSnackBar("投稿を削除しました"),
+                                            );
+                                          }
                                         } catch (e) {
                                           if (context.mounted) {
                                             ErrorDialog.show(context: context, message: '投稿の削除に失敗しました。');
@@ -208,6 +219,11 @@ class MyPage extends HookConsumerWidget {
                     try {
                       await ref.read(authNotifierProvider.notifier).signOut();
                       if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          customSnackBar("ログアウトしました"),
+                        );
+                        await Future.delayed(const Duration(seconds: 2));
+                        if (!context.mounted) return;
                         const SignInPageRoute().go(context);
                       }
                     } catch (e) {
@@ -276,7 +292,12 @@ class MyPage extends HookConsumerWidget {
                     try {
                       await ref.read(authNotifierProvider.notifier).delete(id: profile.id);
                       if (context.mounted) {
-                        const SignInPageRoute().push(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          customSnackBar("アカウントを削除しました"),
+                        );
+                        await Future.delayed(const Duration(seconds: 2));
+                        if (!context.mounted) return;
+                        const SignInPageRoute().go(context);
                       }
                     } catch (e) {
                       if (context.mounted) {
@@ -464,6 +485,11 @@ class _BottomSheet extends HookConsumerWidget {
                         email: emailController.value.text,
                         password: passwordController.value.text);
                     if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar("アカウント登録しました"),
+                      );
+                      await Future.delayed(const Duration(seconds: 2));
+                      if (!context.mounted) return;
                       const TopPageRoute().go(context);
                     }
                   } on FirebaseAuthException catch (e) {
