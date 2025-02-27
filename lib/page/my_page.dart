@@ -69,7 +69,7 @@ class MyPage extends HookConsumerWidget {
                           width: double.infinity,
                           imageUrl: data[index]!.postImageUrl,
                           progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress),
+                              Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                           errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
                           fit: BoxFit.cover,
                         ),
@@ -197,7 +197,7 @@ class MyPage extends HookConsumerWidget {
                         ),
                       );
                     },
-                  ) : const _NoData();;
+                  ) : const _NoData();
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text("エラー: $error"),

@@ -25,6 +25,8 @@ class PostPage extends HookConsumerWidget {
 
     final profile = ref.watch(profileNotifierProvider).valueOrNull;
 
+    if (profile == null) return const Center(child: CircularProgressIndicator());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
